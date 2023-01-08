@@ -1,0 +1,1 @@
+g++ main.cpp Product.cpp && ./a.out && rm ./a.out
