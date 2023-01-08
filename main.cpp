@@ -57,6 +57,7 @@ int main()
     std::map<std::string, Product> products;
     while (true)
     {
+        Product::fetchProducts(products);
         clearConsole();
         eAction action = promptAction();
         switch (action)
@@ -65,29 +66,29 @@ int main()
         {
             std::string productName;
             unsigned int amount;
+            unsigned int price;
             inputLine("Ievadiet produkta nosaukumu: ", productName);
             input("Ievadiet skaitu: ",amount);
+            input("Ievadiet cenu (centos): ", price);
             int unitsAdding;
-            products.emplace(std::pair<std::string,Product>(productName,Product(productName.c_str(),0,amount)));
-            Product::writeProducts(products);
-            // TODO (O.P.): pabeigt šo ig
+            products.emplace(std::pair<std::string,Product>(productName,Product(productName.c_str(),price,amount)));
+            
             break;
         }
         case eAction::OutputProducts:
         {
-            Product::fetchProducts(products);
             for(auto& pair : products){
                 Product& prod=pair.second;
                 prod.print();
                 std::cout<<"\n";
             }
-            std::cin.get();
+            pauseConsole();
             break;
         }
         case eAction::SellProduct:
         {
             std::string productName;
-            input("Ievadiet produkta nosaukumu: ", productName);
+            inputLine("Ievadiet produkta nosaukumu: ", productName);
             if (products.find(productName) == products.end())
             {
                 cout << "Produkts \"" << productName << "\" netika atrasts!\n";
@@ -106,7 +107,36 @@ int main()
         }
         case eAction::Top3MostSold:
         {
-            // TODO (O.P.)
+            const int TOP_COUNT=3;
+            std::vector<Product*> top3vec(TOP_COUNT);
+            for(int i=0;i<TOP_COUNT;i++){
+                top3vec[i]=nullptr;
+            }
+            for(auto& pair : products){
+                Product* prod=&pair.second;
+                for(int i=0;i<TOP_COUNT;i++){
+                    if(top3vec[i]==nullptr || top3vec[i]->unitsSold<prod->unitsSold){
+                        for(int i2=i+1;i2<TOP_COUNT;i2++){
+                            top3vec[i2]=top3vec[i2-1];
+                        }
+                        top3vec[i]=prod;
+                        break;
+                    }
+                }
+            }
+            if(top3vec[0]!=nullptr){
+                std::cout<<"Pārdotākais:\n";
+                top3vec[0]->print();
+            }
+            if(top3vec[1]!=nullptr){
+                std::cout<<"\n\nOtrais pārdotākais:\n";
+                top3vec[1]->print();
+            }
+            if(top3vec[2]!=nullptr){
+                std::cout<<"\n\nTrešais pārdotākais:\n";
+                top3vec[2]->print();
+            }
+            pauseConsole();
             break;
         }
         case eAction::Top3LeastSold:
@@ -159,12 +189,71 @@ int main()
         }
         case eAction::Top3LeastProfit:
         {
-            // TODO (O.P.)
+            const int TOP_COUNT=3;
+            std::vector<Product*> top3vec(TOP_COUNT);
+            for(int i=0;i<TOP_COUNT;i++){
+                top3vec[i]=nullptr;
+            }
+            for(auto& pair : products){
+                Product* prod=&pair.second;
+                for(int i=0;i<TOP_COUNT;i++){
+                    if(top3vec[i]==nullptr||(top3vec[i]->unitsSold*top3vec[i]->price)>(prod->unitsSold*prod->price)){
+                        for(int i2=i+1;i2<TOP_COUNT;i2++){
+                            top3vec[i2]=top3vec[i2-1];
+                        }
+                        top3vec[i]=prod;
+                        break;
+                    }
+                }
+            }
+            if(top3vec[0]!=nullptr){
+                std::cout<<"Vismazāk pelnošais:\n";
+                top3vec[0]->print();
+            }
+            if(top3vec[1]!=nullptr){
+                std::cout<<"\n\nOtrais vismazāk pelnošais:\n";
+                top3vec[1]->print();
+            }
+            if(top3vec[2]!=nullptr){
+                std::cout<<"\n\nTrešais vismazāk pelnošais:\n";
+                top3vec[2]->print();
+            }
+            pauseConsole();
+            
             break;
         }
         case eAction::Top3MostExpensive:
         {
-            // TODO (O.P.)
+            const int TOP_COUNT=3;
+            std::vector<Product*> top3vec(TOP_COUNT);
+            for(int i=0;i<TOP_COUNT;i++){
+                top3vec[i]=nullptr;
+            }
+            for(auto& pair : products){
+                Product* prod=&pair.second;
+                for(int i=0;i<TOP_COUNT;i++){
+                    if(top3vec[i]==nullptr||(top3vec[i]->price)<(prod->price)){
+                        for(int i2=i+1;i2<TOP_COUNT;i2++){
+                            top3vec[i2]=top3vec[i2-1];
+                        }
+                        top3vec[i]=prod;
+                        break;
+                    }
+                }
+            }
+            if(top3vec[0]!=nullptr){
+                std::cout<<"Dārgākais:\n";
+                top3vec[0]->print();
+            }
+            if(top3vec[1]!=nullptr){
+                std::cout<<"\n\nOtrais dārgākais:\n";
+                top3vec[1]->print();
+            }
+            if(top3vec[2]!=nullptr){
+                std::cout<<"\n\nTrešais dārgākais:\n";
+                top3vec[2]->print();
+            }
+            pauseConsole();
             break;
         }
         case eAction::Top3LeastExpensive:
@@ -193,9 +282,10 @@ int main()
         }
         case eAction::Exit:
         {
-            // TODO (O.P.)
+            Product::writeProducts(products);
             return 0;
         }
         }
+        Product::writeProducts(products);
     }
 }
