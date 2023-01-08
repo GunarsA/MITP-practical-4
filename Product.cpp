@@ -25,26 +25,38 @@ void Product::print(){
 
 void Product::writeProducts(const std::map<std::string,Product>& products){
     std::ofstream ostream("products.bin", std::ios::binary | std::ios::out);
-    size_t len=products.size();
-    ostream.write((char*)(&len), sizeof(size_t));
-    for(auto& pair : products){
-        const Product &product=pair.second;
-        ostream.write(product.name,NAME_SIZE);
-        ostream.write((char *)(&(product)), sizeof(Product));
+    if(ostream.is_open()){
+        size_t len=products.size();
+        ostream.write((char*)(&len), sizeof(size_t));
+        for(auto& pair : products){
+            const Product &product=pair.second;
+            ostream.write(product.name,NAME_SIZE);
+            ostream.write((char *)(&(product)), sizeof(Product));
+        }
+
+    }else{
+        std::cout<<"\n\nNevarēja atvērt failu.\n\n";
     }
+    
     ostream.close();
 }
 
 void Product::fetchProducts(std::map<std::string,Product>& productRef){
-    productRef.clear();
     std::ifstream istream("products.bin", std::ios::binary | std::ios::in);
-    size_t productCount;
-    istream.read((char*)(&productCount),sizeof(size_t));
-    for(size_t i=0;i<productCount;i++){
-        char name[NAME_SIZE];
-        istream.read(name, NAME_SIZE);
-        std::map<std::string,Product>::iterator pr=productRef.emplace(std::pair<std::string, Product>(std::string(name),Product(name))).first;
-        istream.read(reinterpret_cast<char *>(&((*pr).second)), sizeof(Product));  
+    if(istream.is_open()){
+        productRef.clear();
+        size_t productCount;
+        istream.read((char*)(&productCount),sizeof(size_t));
+        for(size_t i=0;i<productCount;i++){
+            char name[NAME_SIZE];
+            istream.read(name, NAME_SIZE);
+            std::map<std::string,Product>::iterator pr=productRef.emplace(std::pair<std::string, Product>(std::string(name),Product(name))).first;
+            istream.read(reinterpret_cast<char *>(&((*pr).second)), sizeof(Product));  
+        }
+
+    }else{
+        std::cout<<"\n\nNevarēja atvērt failu.\n\n";
     }
     istream.close();
+    
 }
