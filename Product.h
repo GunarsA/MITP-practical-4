@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
+#include <cstring>
 
 class Product
 {
 private:
-    
-    char name[128];
+    const static size_t NAME_SIZE=128;
+    char name[NAME_SIZE];
 
     // price in cents
     unsigned int price;
@@ -14,7 +15,7 @@ private:
 
     unsigned int unitsSold;
 public:
-    Product(char *name, unsigned int price=0, unsigned int unitsAvailable=0, unsigned int unitsSold=0);
+    Product(const char *name, unsigned int price=0, unsigned int unitsAvailable=0, unsigned int unitsSold=0);
     ~Product();
 };
 
