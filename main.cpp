@@ -55,6 +55,46 @@ int main()
         eAction action = promptAction();
         switch (action)
         {
+        case eAction::AddProduct:
+        {
+            break;
+        }
+        case eAction::OutputProducts:
+        {
+            break;
+        }
+        case eAction::SellProduct:
+        {
+            break;
+        }
+        case eAction::ProductInfo:
+        {
+            break;
+        }
+        case eAction::Top3MostSold:
+        {
+            break;
+        }
+        case eAction::Top3LeastSold:
+        {
+            break;
+        }
+        case eAction::Top3MostProfit:
+        {
+            break;
+        }
+        case eAction::Top3LeastProfit:
+        {
+            break;
+        }
+        case eAction::Top3MostExpensive:
+        {
+            break;
+        }
+        case eAction::Top3LeastExpensive:
+        {
+            break;
+        }
         case eAction::Exit:
         {
             return 0;
