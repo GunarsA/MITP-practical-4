@@ -47,9 +47,9 @@ void input(const std::string& prompt, T &variable) {
     }
 }
 
-void inputLine(const string& prompt, string &variable) {
+void inputLine(const std::string& prompt, std::string &variable) {
     cout<<prompt;
-    getline(cin, variable);
+    std::getline(cin, variable);
     if(cin.fail()) {
         cin.clear();
         cin.ignore(69420, '\n');
