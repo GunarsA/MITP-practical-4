@@ -34,10 +34,10 @@ eAction promptAction()
         {eAction::Top3LeastExpensive, "Izdrukāt uz ekrāna Top3 vislētākos produktus"},
         {eAction::Exit, "Beigt programmu"}};
 
-    std::cout << "Izvēlieties darbību:\n";
+    cout << "Izvēlieties darbību:\n";
     for (auto action : actions)
     {
-        std::cout << "\t" << (int)action.first << ". " << action.second << std::endl;
+        cout << "\t" << (int)action.first << ". " << action.second << endl;
     }
 
     eAction result;
@@ -57,6 +57,10 @@ int main()
         {
         case eAction::AddProduct:
         {
+            std::string productName;
+            input("Ievadiet produkta nosaukumu: ", productName);
+            int unitsAdding;
+            // TODO: pabeigt šo ig
             break;
         }
         case eAction::OutputProducts:
