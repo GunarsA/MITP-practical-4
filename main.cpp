@@ -64,14 +64,24 @@ int main()
         case eAction::AddProduct:
         {
             std::string productName;
-            input("Ievadiet produkta nosaukumu: ", productName);
+            unsigned int amount;
+            inputLine("Ievadiet produkta nosaukumu: ", productName);
+            input("Ievadiet skaitu: ",amount);
             int unitsAdding;
+            products.emplace(std::pair<std::string,Product>(productName,Product(productName.c_str(),0,amount)));
+            Product::writeProducts(products);
             // TODO (O.P.): pabeigt šo ig
             break;
         }
         case eAction::OutputProducts:
         {
-            // TODO (O.P.)
+            Product::fetchProducts(products);
+            for(auto& pair : products){
+                Product& prod=pair.second;
+                prod.print();
+                std::cout<<"\n";
+            }
+            std::cin.get();
             break;
         }
         case eAction::SellProduct:
