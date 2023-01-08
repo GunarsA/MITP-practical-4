@@ -1,6 +1,8 @@
 #include "utils.hpp"
 #include "Product.h"
 #include <map>
+#include <vector>
+#include <algorithm>
 
 using std::cin;
 using std::cout;
@@ -50,8 +52,9 @@ eAction promptAction()
 
 int main()
 {
-    std::map<std::string, Product> products;
     cout << "3. PRAKTISKAIS" << endl;
+
+    std::map<std::string, Product> products;
     while (true)
     {
         clearConsole();
@@ -75,7 +78,13 @@ int main()
         {
             std::string productName;
             input("Ievadiet produkta nosaukumu: ", productName);
-            // TODO (K.P.):
+            if (products.find(productName) == products.end())
+            {
+                cout << "Produkts \"" << productName << "\" netika atrasts!\n";
+                break;
+            }
+            products[productName].unitsAvailable--;
+            products[productName].unitsSold++;
             break;
         }
         case eAction::ProductInfo:
@@ -92,12 +101,50 @@ int main()
         }
         case eAction::Top3LeastSold:
         {
-            // TODO (K.P.)
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by units sold in ascending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return a.unitsSold > b.unitsSold;
+                      });
+
+            cout<<"3 vismazāk iztirgotie produkti\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "Top " << i << ": ";
+                if (i <= productVec.size())
+                    cout << productVec[i - 1].name;
+                cout<<"\n";
+            }
+            pauseConsole();
             break;
         }
         case eAction::Top3MostProfit:
         {
-            // TODO (K.P.)
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by (units sold * price) in descending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return (a.unitsSold*a.price) < (b.unitsSold*b.price);
+                      });
+
+            cout<<"3 produkti, ar kuriem visvairāk nopelnīts\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "Top " << i << ": ";
+                if (i <= productVec.size())
+                    cout << productVec[i - 1].name;
+                cout<<"\n";
+            }
+            pauseConsole();
             break;
         }
         case eAction::Top3LeastProfit:
@@ -112,7 +159,26 @@ int main()
         }
         case eAction::Top3LeastExpensive:
         {
-            // TODO (K.P.)
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by price in ascending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return a.price > b.price;
+                      });
+
+            cout<<"3 vislētākie produkti\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "Top " << i << ": ";
+                if (i <= productVec.size())
+                    cout << productVec[i - 1].name;
+                cout<<"\n";
+            }
+            pauseConsole();
             break;
         }
         case eAction::Exit:
