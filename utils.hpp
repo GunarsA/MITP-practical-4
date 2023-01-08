@@ -46,3 +46,14 @@ void input(const std::string& prompt, T &variable) {
         return input(prompt,variable);
     }
 }
+
+void inputLine(const string& prompt, string &variable) {
+    cout<<prompt;
+    getline(cin, variable);
+    if(cin.fail()) {
+        cin.clear();
+        cin.ignore(69420, '\n');
+        cout<<"Ievades kļūda!\n";
+        return input(prompt,variable);
+    }
+}
