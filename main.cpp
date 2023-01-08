@@ -71,8 +71,8 @@ int main()
             input("Ievadiet skaitu: ",amount);
             input("Ievadiet cenu (centos): ", price);
             int unitsAdding;
-            products.emplace(std::pair<std::string,Product>(productName,Product(productName.c_str(),price,amount)));
-            
+            products[productName] = Product(productName.c_str(),price,amount);
+            pauseConsole();
             break;
         }
         case eAction::OutputProducts:
@@ -94,15 +94,27 @@ int main()
                 cout << "Produkts \"" << productName << "\" netika atrasts!\n";
                 break;
             }
+            if (products[productName].unitsAvailable==0)
+            {
+                cout << "Produkta \"" << productName << "\" pieejamais skaits ir 0!\n";
+                break;
+            }
             products[productName].unitsAvailable--;
             products[productName].unitsSold++;
+            pauseConsole();
             break;
         }
         case eAction::ProductInfo:
         {
             std::string productName;
-            input("Ievadiet produkta nosaukumu: ", productName);
-            // TODO (O.P.)
+            inputLine("Ievadiet produkta nosaukumu: ", productName);
+            if (products.find(productName) == products.end())
+            {
+                cout << "Produkts \"" << productName << "\" netika atrasts!\n";
+                break;
+            }
+            products[productName].print();
+            pauseConsole();
             break;
         }
         case eAction::Top3MostSold:
@@ -149,7 +161,7 @@ int main()
             std::sort(productVec.begin(), productVec.end(),
                       [](const Product &a, const Product &b) -> bool
                       {
-                          return a.unitsSold > b.unitsSold;
+                          return a.unitsSold < b.unitsSold;
                       });
 
             cout<<"3 vismazāk iztirgotie produkti\n";
@@ -173,7 +185,7 @@ int main()
             std::sort(productVec.begin(), productVec.end(),
                       [](const Product &a, const Product &b) -> bool
                       {
-                          return (a.unitsSold*a.price) < (b.unitsSold*b.price);
+                          return (a.unitsSold*a.price) > (b.unitsSold*b.price);
                       });
 
             cout<<"3 produkti, ar kuriem visvairāk nopelnīts\n";
@@ -266,7 +278,7 @@ int main()
             std::sort(productVec.begin(), productVec.end(),
                       [](const Product &a, const Product &b) -> bool
                       {
-                          return a.price > b.price;
+                          return a.price < b.price;
                       });
 
             cout<<"3 vislētākie produkti\n";
