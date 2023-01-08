@@ -1,4 +1,6 @@
 #include "utils.hpp"
+#include "Product.h"
+#include <map>
 
 using std::cin;
 using std::cout;
@@ -48,6 +50,7 @@ eAction promptAction()
 
 int main()
 {
+    std::map<std::string, Product> products;
     cout << "3. PRAKTISKAIS" << endl;
     while (true)
     {
@@ -60,47 +63,61 @@ int main()
             std::string productName;
             input("Ievadiet produkta nosaukumu: ", productName);
             int unitsAdding;
-            // TODO: pabeigt šo ig
+            // TODO (O.P.): pabeigt šo ig
             break;
         }
         case eAction::OutputProducts:
         {
+            // TODO (O.P.)
             break;
         }
         case eAction::SellProduct:
         {
+            std::string productName;
+            input("Ievadiet produkta nosaukumu: ", productName);
+            // TODO (K.P.):
             break;
         }
         case eAction::ProductInfo:
         {
+            std::string productName;
+            input("Ievadiet produkta nosaukumu: ", productName);
+            // TODO (O.P.)
             break;
         }
         case eAction::Top3MostSold:
         {
+            // TODO (O.P.)
             break;
         }
         case eAction::Top3LeastSold:
         {
+            // TODO (K.P.)
             break;
         }
         case eAction::Top3MostProfit:
         {
+            // TODO (K.P.)
             break;
         }
         case eAction::Top3LeastProfit:
         {
+            // TODO (O.P.)
             break;
         }
         case eAction::Top3MostExpensive:
         {
+            // TODO (O.P.)
             break;
         }
         case eAction::Top3LeastExpensive:
         {
+            // TODO (K.P.)
             break;
         }
         case eAction::Exit:
         {
+            // TODO (O.P.)
             return 0;
         }
         }
