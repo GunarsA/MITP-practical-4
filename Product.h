@@ -15,7 +15,7 @@ public:
 
     unsigned int unitsSold;
 
-    Product(const char *name, unsigned int price=0, unsigned int unitsAvailable=0, unsigned int unitsSold=0);
+    Product(const char *name="THIS SHOULDN'T BE VISIBLE", unsigned int price=0, unsigned int unitsAvailable=0, unsigned int unitsSold=0);
     ~Product();
 
     static void writeProducts(const std::map<std::string,Product>& products);
