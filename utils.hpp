@@ -34,3 +34,15 @@ void pauseConsole()
     cout << "Nospiediet enter, lai turpināt!" << endl;
     cin.ignore(69420, '\n'); // clear input buffer
 }
+
+template<typename T>
+void input(const std::string& prompt, T &variable) {
+    cout<<prompt;
+    cin>>variable;
+    if(cin.fail()) {
+        cin.clear();
+        cin.ignore(69420, '\n');
+        cout<<"Ievades kļūda!\n";
+        return input(prompt,variable);
+    }
+}
