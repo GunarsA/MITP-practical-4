@@ -65,22 +65,33 @@ int main()
         case eAction::AddProduct:
         {
             std::string productName;
-            unsigned int amount;
-            unsigned int price;
+            int amount, price;
             inputLine("Ievadiet produkta nosaukumu: ", productName);
-            input("Ievadiet skaitu: ",amount);
-            input("Ievadiet cenu (centos): ", price);
-            int unitsAdding;
-            products[productName] = Product(productName.c_str(),price,amount);
+            if (products.find(productName) != products.end())
+            {
+                cout << "Produkts \"" << productName << "\" eksistē. (tas tiks papildināts)\n";
+                input("Ievadiet skaitu: ", amount);
+                products[productName].unitsAvailable += amount;
+            }
+            else
+            {
+                cout << "Produkts \"" << productName << "\" neeksistē. (tas tiks pievienots)\n";
+                input("Ievadiet skaitu: ", amount);
+                input("Ievadiet cenu (centos): ", price);
+                products[productName] = Product(productName.c_str(), price, amount);
+            }
+            cout << "Produkta stāvoklis:\n";
+            products[productName].print();
             pauseConsole();
             break;
         }
         case eAction::OutputProducts:
         {
-            for(auto& pair : products){
-                Product& prod=pair.second;
+            for (auto &pair : products)
+            {
+                Product &prod = pair.second;
                 prod.print();
-                std::cout<<"\n";
+                std::cout << "\n";
             }
             pauseConsole();
             break;
@@ -92,11 +103,13 @@ int main()
             if (products.find(productName) == products.end())
             {
                 cout << "Produkts \"" << productName << "\" netika atrasts!\n";
+                pauseConsole();
                 break;
             }
-            if (products[productName].unitsAvailable==0)
+            if (products[productName].unitsAvailable == 0)
             {
                 cout << "Produkta \"" << productName << "\" pieejamais skaits ir 0!\n";
+                pauseConsole();
                 break;
             }
             products[productName].unitsAvailable--;
@@ -119,34 +132,25 @@ int main()
         }
         case eAction::Top3MostSold:
         {
-            const int TOP_COUNT=3;
-            std::vector<Product*> top3vec(TOP_COUNT);
-            for(int i=0;i<TOP_COUNT;i++){
-                top3vec[i]=nullptr;
-            }
-            for(auto& pair : products){
-                Product* prod=&pair.second;
-                for(int i=0;i<TOP_COUNT;i++){
-                    if(top3vec[i]==nullptr || top3vec[i]->unitsSold<prod->unitsSold){
-                        for(int i2=i+1;i2<TOP_COUNT;i2++){
-                            top3vec[i2]=top3vec[i2-1];
-                        }
-                        top3vec[i]=prod;
-                        break;
-                    }
-                }
-            }
-            if(top3vec[0]!=nullptr){
-                std::cout<<"Pārdotākais:\n";
-                top3vec[0]->print();
-            }
-            if(top3vec[1]!=nullptr){
-                std::cout<<"\n\nOtrais pārdotākais:\n";
-                top3vec[1]->print();
-            }
-            if(top3vec[2]!=nullptr){
-                std::cout<<"\n\nTrešais pārdotākais:\n";
-                top3vec[2]->print();
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by units sold in descending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return a.unitsSold > b.unitsSold;
+                      });
+
+            cout << "3 visvairāk iztirgotie produkti\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "TOP " << i << "\n";
+                if (i <= productVec.size())
+                    productVec[i].print();
+                else
+                    cout << "produkts neeksistē\n";
             }
             pauseConsole();
             break;
@@ -164,13 +168,14 @@ int main()
                           return a.unitsSold < b.unitsSold;
                       });
 
-            cout<<"3 vismazāk iztirgotie produkti\n";
+            cout << "3 vismazāk iztirgotie produkti\n";
             for (int i = 1; i <= 3; i++)
             {
-                cout << "Top " << i << ": ";
+                cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    cout << productVec[i - 1].name;
-                cout<<"\n";
+                    productVec[i].print();
+                else
+                    cout << "produkts neeksistē\n";
             }
             pauseConsole();
             break;
@@ -185,85 +190,68 @@ int main()
             std::sort(productVec.begin(), productVec.end(),
                       [](const Product &a, const Product &b) -> bool
                       {
-                          return (a.unitsSold*a.price) > (b.unitsSold*b.price);
+                          return (a.unitsSold * a.price) > (b.unitsSold * b.price);
                       });
 
-            cout<<"3 produkti, ar kuriem visvairāk nopelnīts\n";
+            cout << "3 produkti, ar kuriem visvairāk nopelnīts\n";
             for (int i = 1; i <= 3; i++)
             {
-                cout << "Top " << i << ": ";
+                cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    cout << productVec[i - 1].name;
-                cout<<"\n";
+                    productVec[i].print();
+                else
+                    cout << "produkts neeksistē\n";
             }
             pauseConsole();
             break;
         }
         case eAction::Top3LeastProfit:
         {
-            const int TOP_COUNT=3;
-            std::vector<Product*> top3vec(TOP_COUNT);
-            for(int i=0;i<TOP_COUNT;i++){
-                top3vec[i]=nullptr;
-            }
-            for(auto& pair : products){
-                Product* prod=&pair.second;
-                for(int i=0;i<TOP_COUNT;i++){
-                    if(top3vec[i]==nullptr||(top3vec[i]->unitsSold*top3vec[i]->price)>(prod->unitsSold*prod->price)){
-                        for(int i2=i+1;i2<TOP_COUNT;i2++){
-                            top3vec[i2]=top3vec[i2-1];
-                        }
-                        top3vec[i]=prod;
-                        break;
-                    }
-                }
-            }
-            if(top3vec[0]!=nullptr){
-                std::cout<<"Vismazāk pelnošais:\n";
-                top3vec[0]->print();
-            }
-            if(top3vec[1]!=nullptr){
-                std::cout<<"\n\nOtrais vismazāk pelnošais:\n";
-                top3vec[1]->print();
-            }
-            if(top3vec[2]!=nullptr){
-                std::cout<<"\n\nTrešais vismazāk pelnošais:\n";
-                top3vec[2]->print();
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by (units sold * price) in ascending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return (a.unitsSold * a.price) < (b.unitsSold * b.price);
+                      });
+
+            cout << "3 produkti, ar kuriem vismazāk nopelnīts\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "TOP " << i << "\n";
+                if (i <= productVec.size())
+                    productVec[i].print();
+                else
+                    cout << "produkts neeksistē\n";
             }
             pauseConsole();
-            
+
             break;
         }
         case eAction::Top3MostExpensive:
         {
-            const int TOP_COUNT=3;
-            std::vector<Product*> top3vec(TOP_COUNT);
-            for(int i=0;i<TOP_COUNT;i++){
-                top3vec[i]=nullptr;
-            }
-            for(auto& pair : products){
-                Product* prod=&pair.second;
-                for(int i=0;i<TOP_COUNT;i++){
-                    if(top3vec[i]==nullptr||(top3vec[i]->price)<(prod->price)){
-                        for(int i2=i+1;i2<TOP_COUNT;i2++){
-                            top3vec[i2]=top3vec[i2-1];
-                        }
-                        top3vec[i]=prod;
-                        break;
-                    }
-                }
-            }
-            if(top3vec[0]!=nullptr){
-                std::cout<<"Dārgākais:\n";
-                top3vec[0]->print();
-            }
-            if(top3vec[1]!=nullptr){
-                std::cout<<"\n\nOtrais dārgākais:\n";
-                top3vec[1]->print();
-            }
-            if(top3vec[2]!=nullptr){
-                std::cout<<"\n\nTrešais dārgākais:\n";
-                top3vec[2]->print();
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by price in descending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return a.price > b.price;
+                      });
+
+            cout << "3 vislētākie produkti\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "TOP " << i << "\n";
+                if (i <= productVec.size())
+                    productVec[i].print();
+                else
+                    cout << "produkts neeksistē\n";
             }
             pauseConsole();
             break;
@@ -281,13 +269,14 @@ int main()
                           return a.price < b.price;
                       });
 
-            cout<<"3 vislētākie produkti\n";
+            cout << "3 vislētākie produkti\n";
             for (int i = 1; i <= 3; i++)
             {
-                cout << "Top " << i << ": ";
+                cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    cout << productVec[i - 1].name;
-                cout<<"\n";
+                    productVec[i].print();
+                else
+                    cout << "produkts neeksistē\n";
             }
             pauseConsole();
             break;
