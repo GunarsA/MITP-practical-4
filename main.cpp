@@ -133,7 +133,7 @@ int main()
         case eAction::Top3MostSold:
         {
             std::vector<Product> productVec;
-            for (auto p : products)
+            for (auto& p : products)
                 productVec.push_back(p.second);
 
             // sort by units sold in descending order
@@ -148,7 +148,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i].print();
+                    productVec[i-1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -173,7 +173,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i].print();
+                    productVec[i-1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -198,7 +198,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i].print();
+                    productVec[i-1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -223,7 +223,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i].print();
+                    productVec[i-1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -244,12 +244,12 @@ int main()
                           return a.price > b.price;
                       });
 
-            cout << "3 vislētākie produkti\n";
+            cout << "3 dārgākie produkti\n";
             for (int i = 1; i <= 3; i++)
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i].print();
+                    productVec[i-1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -274,7 +274,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i].print();
+                    productVec[i-1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
