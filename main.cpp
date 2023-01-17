@@ -4,11 +4,11 @@
 #include <vector>
 #include <algorithm>
 #include <windows.h>
+#include <map>
 
 using std::cin;
 using std::cout;
 using std::endl;
-using std::min;
 
 enum class eAction
 {
@@ -143,7 +143,7 @@ int main()
         case eAction::Top3MostSold:
         {
             std::vector<Product> productVec;
-            for (auto& p : products)
+            for (auto &p : products)
                 productVec.push_back(p.second);
 
             // sort by units sold in descending order
@@ -158,7 +158,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -183,7 +183,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -208,7 +208,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -233,7 +233,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -259,7 +259,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -284,7 +284,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -300,35 +300,48 @@ int main()
             for (auto p : products)
                 productVec.push_back(p.second);
 
-            // sort by price in descending order
+            // sort by price in ascending order
             std::sort(productVec.begin(), productVec.end(),
                       [](const Product &a, const Product &b) -> bool
                       {
-                          return a.price > b.price;
+                          return a.price < b.price;
                       });
 
+            std::map<std::string, std::pair<int, int>> boughtAmount;
             bool boughtSomething = false;
-            for(const auto &i : productVec)
+            while (true)
             {
-                int soldQuantity = min(availableMoney / i.price, i.unitsAvailable);
+                bool currBoughtSomething = false;
 
-                if(soldQuantity)
+                for (const auto &i : productVec)
                 {
-                    boughtSomething = true;
-                
-                    availableMoney -= soldQuantity * i.price;
-                    products[i.name].unitsAvailable -= soldQuantity;
-                    products[i.name].unitsSold += soldQuantity;
+                    if (i.price <= availableMoney && products[i.name].unitsAvailable)
+                    {
+                        boughtSomething = currBoughtSomething = true;
 
-                    cout << "Nopirkta(s) [" << soldQuantity << "] vienība(s) [" << i.name << "] par [" << soldQuantity * i.price << "]\n";
+                        availableMoney -= i.price;
+                        --products[i.name].unitsAvailable;
+                        ++products[i.name].unitsSold;
+
+                        if (boughtAmount.find(i.name) == boughtAmount.end())
+                            boughtAmount.insert({i.name, {1, i.price}});
+                        else
+                            ++(boughtAmount[i.name].first);
+                    }
                 }
+
+                if (!currBoughtSomething)
+                    break;
             }
 
-            if(!boughtSomething)
+            for (const auto &i : boughtAmount)
+                cout << "Nopirkta(s) [" << i.second.first << "] vienība(s) [" << i.first << "] par [" << i.second.first * i.second.second << "]\n";
+
+            if (!boughtSomething)
                 cout << "Nekas par šadu summu nevar tikt nopirkts\n";
             else
                 cout << "Naudas pārpalikums pēc pirkšanas [" << availableMoney << "]\n";
-            
+
             pauseConsole();
             break;
         }
@@ -350,7 +363,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
@@ -375,7 +388,7 @@ int main()
             {
                 cout << "TOP " << i << "\n";
                 if (i <= productVec.size())
-                    productVec[i-1].print();
+                    productVec[i - 1].print();
                 else
                     cout << "produkts neeksistē\n";
             }
