@@ -3,10 +3,12 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <windows.h>
 
 using std::cin;
 using std::cout;
 using std::endl;
+using std::min;
 
 enum class eAction
 {
@@ -20,7 +22,10 @@ enum class eAction
     Top3LeastProfit = 8,
     Top3MostExpensive = 9,
     Top3LeastExpensive = 10,
-    Exit = 11
+    Assorted = 11,
+    Top3MostAvailable = 12,
+    Top3LeastAvailable = 13,
+    Exit = 14
 };
 
 eAction promptAction()
@@ -36,6 +41,9 @@ eAction promptAction()
         {eAction::Top3LeastProfit, "Izdrukāt uz ekrāna Top3 tos produktus par kuriem ir vismazāk nopelnīts"},
         {eAction::Top3MostExpensive, "Izdrukāt uz ekrāna Top3 visdārgākos produktus"},
         {eAction::Top3LeastExpensive, "Izdrukāt uz ekrāna Top3 vislētākos produktus"},
+        {eAction::Assorted, "Produktu asorti"},
+        {eAction::Top3MostAvailable, "Izdrukāt uz ekrāna Top3 visvairāk pieejamos"},
+        {eAction::Top3LeastAvailable, "Izdrukāt uz ekrāna Top3 vismazāk pieejamos"},
         {eAction::Exit, "Beigt programmu"}};
 
     cout << "Izvēlieties darbību:\n";
@@ -45,13 +53,15 @@ eAction promptAction()
     }
 
     eAction result;
-    input("Izvēlieties darbību [1-11]: ", (int &)result, [](int x) -> bool
-          { return x >= 1 && x <= 11; });
+    input("Izvēlieties darbību [1-14]: ", (int &)result, [](int x) -> bool
+          { return x >= 1 && x <= 14; });
     return result;
 }
 
 int main()
 {
+    SetConsoleOutputCP(CP_UTF8);
+
     cout << "3. PRAKTISKAIS" << endl;
 
     std::map<std::string, Product> products;
@@ -270,6 +280,96 @@ int main()
                       });
 
             cout << "3 vislētākie produkti\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "TOP " << i << "\n";
+                if (i <= productVec.size())
+                    productVec[i-1].print();
+                else
+                    cout << "produkts neeksistē\n";
+            }
+            pauseConsole();
+            break;
+        }
+        case eAction::Assorted:
+        {
+            int availableMoney;
+            input("Ievadiet naudas daudzumu: ", availableMoney);
+
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by price in descending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return a.price > b.price;
+                      });
+
+            bool boughtSomething = false;
+            for(const auto &i : productVec)
+            {
+                int soldQuantity = min(availableMoney / i.price, i.unitsAvailable);
+
+                if(soldQuantity)
+                {
+                    boughtSomething = true;
+                
+                    availableMoney -= soldQuantity * i.price;
+                    products[i.name].unitsAvailable -= soldQuantity;
+
+                    cout << "Nopirkta(s) [" << soldQuantity << "] vienība(s) [" << i.name << "] par [" << soldQuantity * i.price << "]\n";
+                }
+            }
+
+            if(!boughtSomething)
+                cout << "Nekas par šadu summu nevar tikt nopirkts\n";
+            else
+                cout << "Naudas pārpalikums pēc pirkšanas [" << availableMoney << "]\n";
+            
+            pauseConsole();
+            break;
+        }
+        case eAction::Top3MostAvailable:
+        {
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by available units in descending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return a.unitsAvailable > b.unitsAvailable;
+                      });
+
+            cout << "3 produkti, kurī ir visvairāk pieejami\n";
+            for (int i = 1; i <= 3; i++)
+            {
+                cout << "TOP " << i << "\n";
+                if (i <= productVec.size())
+                    productVec[i-1].print();
+                else
+                    cout << "produkts neeksistē\n";
+            }
+            pauseConsole();
+            break;
+        }
+        case eAction::Top3LeastAvailable:
+        {
+            std::vector<Product> productVec;
+            for (auto p : products)
+                productVec.push_back(p.second);
+
+            // sort by available units in ascending order
+            std::sort(productVec.begin(), productVec.end(),
+                      [](const Product &a, const Product &b) -> bool
+                      {
+                          return a.unitsAvailable < b.unitsAvailable;
+                      });
+
+            cout << "3 produkti, kurī ir vismazāk pieejami\n";
             for (int i = 1; i <= 3; i++)
             {
                 cout << "TOP " << i << "\n";
