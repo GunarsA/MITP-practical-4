@@ -318,6 +318,7 @@ int main()
                 
                     availableMoney -= soldQuantity * i.price;
                     products[i.name].unitsAvailable -= soldQuantity;
+                    products[i.name].unitsSold += soldQuantity;
 
                     cout << "Nopirkta(s) [" << soldQuantity << "] vienība(s) [" << i.name << "] par [" << soldQuantity * i.price << "]\n";
                 }
